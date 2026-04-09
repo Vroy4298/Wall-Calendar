@@ -139,7 +139,7 @@ export default function Calendar() {
           </p>
         </div>
         <a
-          href="https://github.com"
+          href="https://github.com/Vroy4298/Wall-Calendar"
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors duration-200"
