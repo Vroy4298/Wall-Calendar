@@ -58,6 +58,19 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Ensure textarea & input text is always visible */
+textarea,
+input[type="text"],
+input[type="search"] {
+  color: rgb(var(--text));
+}
+
+textarea::placeholder,
+input::placeholder {
+  color: rgb(var(--text-muted));
+  opacity: 0.7;
+}
+
 /* ─── Custom Utility Classes ─────────────────────────────────────── */
 
 /* Accent colour utilities based on CSS vars */
