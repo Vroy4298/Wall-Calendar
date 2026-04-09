@@ -1,26 +1,183 @@
 @import "tailwindcss";
 
+/* ─── Design Tokens ──────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --accent: 99 102 241;          /* indigo-500 — overwritten by color-thief */
+  --accent-light: 199 210 254;   /* indigo-200 */
+  --accent-dark: 67 56 202;      /* indigo-700 */
+
+  --bg: 255 255 255;
+  --surface: 248 250 252;
+  --surface-2: 241 245 249;
+  --border: 226 232 240;
+  --text: 15 23 42;
+  --text-muted: 100 116 139;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  --radius: 0.75rem;
+  --radius-sm: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+
+  --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --bg: 2 6 23;
+  --surface: 15 23 42;
+  --surface-2: 30 41 59;
+  --border: 51 65 85;
+  --text: 248 250 252;
+  --text-muted: 148 163 184;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ───────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  background-color: rgb(var(--bg));
+  color: rgb(var(--text));
+  transition: background-color var(--transition-slow), color var(--transition-slow);
+  min-height: 100dvh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Custom Utility Classes ─────────────────────────────────────── */
+
+/* Accent colour utilities based on CSS vars */
+.accent-bg        { background-color: rgb(var(--accent)); }
+.accent-text      { color: rgb(var(--accent)); }
+.accent-border    { border-color: rgb(var(--accent)); }
+.accent-bg-light  { background-color: rgb(var(--accent) / 0.15); }
+.accent-bg-range  { background-color: rgb(var(--accent) / 0.10); }
+
+/* Surface utilities */
+.surface          { background-color: rgb(var(--surface)); }
+.surface-2        { background-color: rgb(var(--surface-2)); }
+.border-base      { border-color: rgb(var(--border)); }
+.text-base        { color: rgb(var(--text)); }
+.text-muted       { color: rgb(var(--text-muted)); }
+
+/* Glass morphism card */
+.glass {
+  background: rgb(var(--surface) / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Premium shadow */
+.shadow-accent {
+  box-shadow: 0 0 0 3px rgb(var(--accent) / 0.3), var(--shadow-md);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(var(--border)); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--text-muted)); }
+
+/* ─── Day cell states ────────────────────────────────────────────── */
+.day-cell {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  transition: transform var(--transition), box-shadow var(--transition);
+  border-radius: var(--radius-sm);
+}
+
+.day-cell:hover {
+  transform: scale(1.06);
+}
+
+.day-cell.is-today .day-num {
+  background-color: rgb(var(--accent));
+  color: #fff;
+  border-radius: var(--radius-full);
+}
+
+.day-cell.is-start .day-num,
+.day-cell.is-end .day-num {
+  background-color: rgb(var(--accent));
+  color: #fff;
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 0 3px rgb(var(--accent) / 0.3);
+}
+
+.day-cell.is-in-range {
+  background-color: rgb(var(--accent) / 0.12);
+}
+
+.day-cell.is-start {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  background-color: rgb(var(--accent) / 0.12);
+}
+
+.day-cell.is-end {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background-color: rgb(var(--accent) / 0.12);
+}
+
+.day-cell.is-adjacent {
+  opacity: 0.35;
+}
+
+.day-cell.is-holiday .day-num::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: #f59e0b;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────── */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgb(var(--accent) / 0.5); }
+  70% { box-shadow: 0 0 0 8px rgb(var(--accent) / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(var(--accent) / 0); }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s infinite;
+}
+
+/* ─── Typography scale ───────────────────────────────────────────── */
+.text-display {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+/* ─── Responsive helpers ─────────────────────────────────────────── */
+.calendar-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .calendar-layout {
+    grid-template-columns: minmax(280px, 360px) 1fr;
+    align-items: start;
+  }
 }
